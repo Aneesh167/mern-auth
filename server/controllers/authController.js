@@ -31,7 +31,7 @@ export const register = async (req, res) => {
       httpOnly: true,
       secure: true, // Always true for HTTPS
       sameSite: "none", // Required for cross-origin
-      domain: ".render.com", // Allow all subdomains
+      // domain: ".render.com", // Allow all subdomains
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -72,7 +72,7 @@ export const login = async (req, res) => {
       httpOnly: true,
       secure: true, // Always true for HTTPS
       sameSite: "none", // Required for cross-origin
-      domain: ".render.com", // Allow all subdomains
+      // domain: ".render.com", // Allow all subdomains
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return res.json({ success: true, message: "Login successful" });
@@ -88,7 +88,7 @@ export const logout = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".render.com",
+      // domain: ".render.com",
     });
     return res.json({ success: true, message: "Logout successful" });
   } catch (error) {
