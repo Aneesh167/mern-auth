@@ -10,11 +10,13 @@ const app = express();
 const port = process.env.PORT || 5000;
 connectDB();
 const allowedOrigins = [
-  "https://authentication-frontend-zwvk.onrender.com"];
+  "https://authentication-frontend-zwvk.onrender.com",
+  "http://localhost:5173",
+];
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin:allowedOrigins, credentials: true }));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 // Api Endpoints
 app.get("/", (req, res) => {
   res.send("Hello World");
