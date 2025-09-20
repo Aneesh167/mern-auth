@@ -29,9 +29,8 @@ export const register = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // Always true for HTTPS
-      sameSite: "none", // Required for cross-origin
-      domain: "authentication-backend-vrff.render.com", // Allow all subdomains
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -51,7 +50,6 @@ export const register = async (req, res) => {
 };
 
 //login controller
-//login controller
 export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -69,20 +67,12 @@ export const login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-
-    // SET COOKIE
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      domain: "authentication-backend-vrff.render.com",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-
-    // ADD DEBUGGING RIGHT AFTER SETTING COOKIE
-    console.log("🍪 LOGIN SUCCESS - Cookie set with domain: .render.com");
-    console.log("User ID:", user._id);
-    console.log("Token generated:", token);
 
     return res.json({ success: true, message: "Login successful" });
   } catch (error) {
@@ -95,9 +85,8 @@ export const logout = async (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      domain: "authentication-backend-vrff.render.com",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
     });
     return res.json({ success: true, message: "Logout successful" });
   } catch (error) {

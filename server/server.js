@@ -1,53 +1,29 @@
-import jwt from "jsonwebtoken";
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import cookieParser from "cookie-parser";
+import connectDB from "./config/mongodb.js";
+import authRouter from "./route/authRoute.js";
+import userRouter from "./route/userRoute.js";
 
-const userAuth = async (req, res, next) => {
-  // ADD DETAILED DEBUGGING
-  console.log("=== AUTH MIDDLEWARE DEBUG ===");
-  console.log("Request URL:", req.url);
-  console.log("Request method:", req.method);
-  console.log("All cookies received:", req.cookies);
-  console.log("Token cookie exists:", !!req.cookies.token);
-  console.log("Request origin:", req.headers.origin);
-  console.log("Request headers:", {
-    cookie: req.headers.cookie,
-    authorization: req.headers.authorization,
-  });
+const app = express();
+const port = process.env.PORT || 5000;
+connectDB();
+const allowedOrigins = [
+  "https://authentication-frontend-zwvk.onrender.com",
+  "http://localhost:5173",
+];
 
-  const { token } = req.cookies;
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: allowedOrigins, credentials: true }));
+// Api Endpoints
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
-  if (!token) {
-    console.log("❌ NO TOKEN FOUND - This is the problem!");
-    console.log("Available cookies:", Object.keys(req.cookies));
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized: Login Again",
-    });
-  }
-
-  console.log("✅ Token found:", token.substring(0, 20) + "...");
-
-  try {
-    const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("✅ Token decoded successfully");
-
-    if (tokenDecode.id) {
-      req.userId = tokenDecode.id;
-      console.log("✅ Authentication successful");
-      next();
-    } else {
-      console.log("❌ Token missing user ID");
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized: Login Again",
-      });
-    }
-  } catch (error) {
-    console.log("❌ JWT verification failed:", error.message);
-    return res.status(401).json({
-      success: false,
-      message: "Unauthorized: Login Again",
-    });
-  }
-};
-
-export default userAuth;
+app.listen(port, () => {
+  console.log(`Server is running on port http://localhost:${port}`);
+});
