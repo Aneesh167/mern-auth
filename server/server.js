@@ -17,6 +17,11 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));
+
+// Test CORS route
+app.get("/test-cors", (req, res) => {
+  res.json({ success: true, message: "CORS is working!" });
+});
 // Api Endpoints
 app.get("/", (req, res) => {
   res.send("Hello World");
