@@ -1,63 +1,53 @@
-import express from "express";
-import cors from "cors";
-import "dotenv/config";
-import cookieParser from "cookie-parser";
-import connectDB from "./config/mongodb.js";
-import authRouter from "./route/authRoute.js";
-import userRouter from "./route/userRoute.js";
-import jwt from "jsonwebtoken"; // ADD THIS IMPORT
+import jwt from "jsonwebtoken";
 
-const app = express();
-const port = process.env.PORT || 5000;
-connectDB();
-const allowedOrigins = [
-  "https://authentication-frontend-zwwk.onrender.com",
-  "http://localhost:5173",
-];
+const userAuth = async (req, res, next) => {
+  // ADD DETAILED DEBUGGING
+  console.log("=== AUTH MIDDLEWARE DEBUG ===");
+  console.log("Request URL:", req.url);
+  console.log("Request method:", req.method);
+  console.log("All cookies received:", req.cookies);
+  console.log("Token cookie exists:", !!req.cookies.token);
+  console.log("Request origin:", req.headers.origin);
+  console.log("Request headers:", {
+    cookie: req.headers.cookie,
+    authorization: req.headers.authorization,
+  });
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+  const { token } = req.cookies;
 
-// ADD DEBUG ENDPOINT RIGHT HERE
-app.get("/api/debug-secret", (req, res) => {
-  const testPayload = { id: "test123" };
-
-  // Create a token with current secret
-  const token = jwt.sign(testPayload, process.env.JWT_SECRET);
-  console.log("Generated token with current secret:", token);
-
-  // Try to verify it
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    res.json({
-      success: true,
-      message: "JWT secret is working",
-      secretExists: !!process.env.JWT_SECRET,
-      token: token,
-      decoded: decoded,
-    });
-  } catch (error) {
-    res.json({
+  if (!token) {
+    console.log("❌ NO TOKEN FOUND - This is the problem!");
+    console.log("Available cookies:", Object.keys(req.cookies));
+    return res.status(401).json({
       success: false,
-      message: "JWT secret error: " + error.message,
-      secretExists: !!process.env.JWT_SECRET,
+      message: "Unauthorized: Login Again",
     });
   }
-});
 
-// Test CORS route
-app.get("/test-cors", (req, res) => {
-  res.json({ success: true, message: "CORS is working!" });
-});
+  console.log("✅ Token found:", token.substring(0, 20) + "...");
 
-// Api Endpoints
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
+  try {
+    const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("✅ Token decoded successfully");
 
-app.listen(port, () => {
-  console.log(`Server is running on port http://localhost:${port}`);
-});
+    if (tokenDecode.id) {
+      req.userId = tokenDecode.id;
+      console.log("✅ Authentication successful");
+      next();
+    } else {
+      console.log("❌ Token missing user ID");
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: Login Again",
+      });
+    }
+  } catch (error) {
+    console.log("❌ JWT verification failed:", error.message);
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized: Login Again",
+    });
+  }
+};
+
+export default userAuth;
