@@ -17,7 +17,9 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-
+console.log("Environment variables loaded:");
+console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Exists" : "MISSING");
+console.log("NODE_ENV:", process.env.NODE_ENV);
 // Test CORS route
 app.get("/test-cors", (req, res) => {
   res.json({ success: true, message: "CORS is working!" });
