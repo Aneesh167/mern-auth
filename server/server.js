@@ -6,6 +6,11 @@ import connectDB from "./config/mongodb.js";
 import authRouter from "./route/authRoute.js";
 import userRouter from "./route/userRoute.js";
 
+console.log('=== SERVER STARTING ===');
+console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Exists' : 'MISSING!');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('Backend URL:', process.env.BACKEND_URL);
+
 const app = express();
 const port = process.env.PORT || 5000;
 connectDB();
