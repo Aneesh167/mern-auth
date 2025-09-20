@@ -5,11 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
 import authRouter from "./route/authRoute.js";
 import userRouter from "./route/userRoute.js";
-
-console.log('=== SERVER STARTING ===');
-console.log('JWT_SECRET:', process.env.JWT_SECRET ? 'Exists' : 'MISSING!');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Backend URL:', process.env.BACKEND_URL);
+import jwt from "jsonwebtoken"; // ADD THIS IMPORT
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -22,13 +18,39 @@ const allowedOrigins = [
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));
-console.log("Environment variables loaded:");
-console.log("JWT_SECRET:", process.env.JWT_SECRET ? "Exists" : "MISSING");
-console.log("NODE_ENV:", process.env.NODE_ENV);
+
+// ADD DEBUG ENDPOINT RIGHT HERE
+app.get("/api/debug-secret", (req, res) => {
+  const testPayload = { id: "test123" };
+
+  // Create a token with current secret
+  const token = jwt.sign(testPayload, process.env.JWT_SECRET);
+  console.log("Generated token with current secret:", token);
+
+  // Try to verify it
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.json({
+      success: true,
+      message: "JWT secret is working",
+      secretExists: !!process.env.JWT_SECRET,
+      token: token,
+      decoded: decoded,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "JWT secret error: " + error.message,
+      secretExists: !!process.env.JWT_SECRET,
+    });
+  }
+});
+
 // Test CORS route
 app.get("/test-cors", (req, res) => {
   res.json({ success: true, message: "CORS is working!" });
 });
+
 // Api Endpoints
 app.get("/", (req, res) => {
   res.send("Hello World");
