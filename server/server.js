@@ -10,7 +10,9 @@ const app = express();
 const port = process.env.PORT || 5000;
 connectDB();
 const allowedOrigins = [
-  "https://authentication-frontend-zwvk.onrender.com"];
+  "https://authentication-frontend-zwvk.onrender.com",
+  "http://localhost:5173",
+];
 
 app.use(express.json());
 app.use(cookieParser());
