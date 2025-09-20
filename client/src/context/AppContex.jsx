@@ -24,10 +24,7 @@ export const AppContextProvider = (props) => {
     } catch (error) {
       setIsLoggedIn(false);
       setUserData(null);
-      // Only show toast for non-401 errors
-      if (error.response?.status !== 401) {
-        toast.error(error.message);
-      }
+      toast.error(error.message);
     }
   };
 
