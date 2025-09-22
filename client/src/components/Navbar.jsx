@@ -7,6 +7,8 @@ import axios from "axios";
 import { useState } from "react";
 
 const Navbar = () => {
+  const [state, setState] = useState("Sign Up");
+  const [showMenu, setShowMenu] = useState(false);
   // Close menu when clicking outside
   React.useEffect(() => {
     const handleClick = (e) => {
@@ -24,8 +26,6 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClick);
     };
   }, [showMenu]);
-  const [state, setState] = useState("Sign Up");
-  const [showMenu, setShowMenu] = useState(false);
 
   const navigate = useNavigate();
   const { userData, backendUrl, setUserData, setIsLoggedIn } =
