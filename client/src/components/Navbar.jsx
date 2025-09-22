@@ -8,6 +8,7 @@ import { useState } from "react";
 
 const Navbar = () => {
   const [state, setState] = useState("Sign Up");
+  const [showMenu, setShowMenu] = useState(false);
 
   const navigate = useNavigate();
   const { userData, backendUrl, setUserData, setIsLoggedIn } =
@@ -50,28 +51,38 @@ const Navbar = () => {
       <img src={assets.logo} alt="" className="w-20 sm:w-32" />
 
       {userData ? (
-        <div className="w-8 h-8 flex justify-center items-center bg-gray-200 rounded-full text-gray-800 font-medium cursor-pointer relative group">
-          {userData.name && userData.name[0]
-            ? userData.name[0].toUpperCase()
-            : "U"}
-          <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10">
-            <ul className="list-none m-0 p-2 bg-gray-100 ">
-              {userData && !userData.isAccountVerified && (
+        <div className="w-8 h-8 flex justify-center items-center bg-gray-200 rounded-full text-gray-800 font-medium cursor-pointer relative">
+          <span onClick={() => setShowMenu((prev) => !prev)}>
+            {userData.name && userData.name[0]
+              ? userData.name[0].toUpperCase()
+              : "U"}
+          </span>
+          {showMenu && (
+            <div className="absolute top-0 right-0 z-10 text-black rounded pt-10">
+              <ul className="list-none m-0 p-2 bg-gray-100 ">
+                {userData && !userData.isAccountVerified && (
+                  <li
+                    onClick={() => {
+                      sendVerificationOtp();
+                      setShowMenu(false);
+                    }}
+                    className="py-1 px-2 hover:bg-gray-300 cursor-pointer transition-all whitespace-nowrap"
+                  >
+                    Verify email
+                  </li>
+                )}
                 <li
-                  onClick={sendVerificationOtp}
-                  className="py-1 px-2 hover:bg-gray-300 cursor-pointer transition-all whitespace-nowrap"
+                  onClick={() => {
+                    logout();
+                    setShowMenu(false);
+                  }}
+                  className="py-1 px-2 hover:bg-gray-300 cursor-pointer transition-all"
                 >
-                  Verify email
+                  Logout
                 </li>
-              )}
-              <li
-                onClick={logout}
-                className="py-1 px-2 hover:bg-gray-300 cursor-pointer transition-all"
-              >
-                Logout
-              </li>
-            </ul>
-          </div>
+              </ul>
+            </div>
+          )}
         </div>
       ) : (
         <div>
