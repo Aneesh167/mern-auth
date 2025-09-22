@@ -70,9 +70,9 @@ const Navbar = () => {
       {userData ? (
         <div className="w-8 h-8 flex justify-center items-center bg-gray-200 rounded-full text-gray-800 font-medium cursor-pointer relative user-menu-icon">
           <span
-            c
+         
             onClick={() => setShowMenu((prev) => !prev)}
-            className="z-index-5"
+            className="z-index-5 "
           >
             {userData.name && userData.name[0]
               ? userData.name[0].toUpperCase()
