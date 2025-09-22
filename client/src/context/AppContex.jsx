@@ -25,22 +25,15 @@ export const AppContextProvider = (props) => {
       setIsLoggedIn(false);
       setUserData(null);
       toast.error(error.message);
+      console.log(error);
     }
   };
 
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/user/data", {
-        withCredentials: true,
-      });
-      if (data.success) {
-        setUserData(data.userData);
-      } else {
-        setUserData(null);
-        toast.error(data.message);
-      }
+      const { data } = await axios.get(backendUrl + "/api/user/data");
+      data.success ? setUserData(data.userData) : toast.error(data.message);
     } catch (error) {
-      setUserData(null);
       toast.error(error.message);
     }
   };

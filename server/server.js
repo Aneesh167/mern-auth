@@ -9,10 +9,7 @@ import userRouter from "./route/userRoute.js";
 const app = express();
 const port = process.env.PORT || 5000;
 connectDB();
-const allowedOrigins = [
-  "https://authentication-frontend-zwwk.onrender.com",
-  "http://localhost:5173",
-];
+const allowedOrigins = ["https://authentication-frontend-zwwk.onrender.com"];
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));

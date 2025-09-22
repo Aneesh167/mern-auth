@@ -9,6 +9,7 @@ const userAuth = async (req, res, next) => {
     const tokenDecode = jwt.verify(token, process.env.JWT_SECRET);
 
     if (tokenDecode.id) {
+      if (!req.body) req.body = {};
       req.userId = tokenDecode.id; // Simplified - no need to check/create req.body
       next();
     } else {
