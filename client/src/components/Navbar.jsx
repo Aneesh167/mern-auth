@@ -7,6 +7,23 @@ import axios from "axios";
 import { useState } from "react";
 
 const Navbar = () => {
+  // Close menu when clicking outside
+  React.useEffect(() => {
+    const handleClick = (e) => {
+      if (
+        !e.target.closest(".user-menu-icon") &&
+        !e.target.closest(".user-menu-list")
+      ) {
+        setShowMenu(false);
+      }
+    };
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+    };
+  }, [showMenu]);
   const [state, setState] = useState("Sign Up");
   const [showMenu, setShowMenu] = useState(false);
 
@@ -51,14 +68,23 @@ const Navbar = () => {
       <img src={assets.logo} alt="" className="w-20 sm:w-32" />
 
       {userData ? (
-        <div className="w-8 h-8 flex justify-center items-center bg-gray-200 rounded-full text-gray-800 font-medium cursor-pointer relative">
-          <span onClick={() => setShowMenu((prev) => !prev)}>
+        <div className="w-8 h-8 flex justify-center items-center bg-gray-200 rounded-full text-gray-800 font-medium cursor-pointer relative user-menu-icon">
+          <span
+            onClick={() => setShowMenu((prev) => !prev)}
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {userData.name && userData.name[0]
               ? userData.name[0].toUpperCase()
               : "U"}
           </span>
           {showMenu && (
-            <div className="absolute top-0 right-0 z-10 text-black rounded pt-10">
+            <div className="absolute top-0 right-0 z-10 text-black rounded pt-10 user-menu-list">
               <ul className="list-none m-0 p-2 bg-gray-100 ">
                 {userData && !userData.isAccountVerified && (
                   <li
