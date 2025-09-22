@@ -43,6 +43,7 @@ const Login = () => {
           setIsLoggedIn(true);
           getUserData();
           navigate("/");
+          toast.success(data.message);
         } else {
           toast.error(data.message || "Something went wrong");
         }
