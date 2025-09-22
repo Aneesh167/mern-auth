@@ -81,7 +81,7 @@ const Navbar = () => {
               : "U"}
           </span>
           {showMenu && (
-            <div className="absolute top-0 right-0 z-10 text-black rounded pt-10 user-menu-list">
+            <div className="absolute top-0 right-0 z-4 text-black rounded pt-10 user-menu-list">
               <ul className="list-none m-0 p-2 bg-gray-100 ">
                 {userData && !userData.isAccountVerified && (
                   <li
